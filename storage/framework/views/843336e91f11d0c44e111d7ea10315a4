@@ -1,0 +1,33 @@
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 600px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+  <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">عنوان</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">توضیحات</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">عملیات</li>
+</ul>
+<?php
+if (isset($fields)){
+  $i=1;
+  foreach($fields as $field){
+    ?>
+    <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 600px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+      <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i;?></li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo $field->title;?></li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo $field->desc;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><a href="javascript:void(0);" onclick="backcosttype('<?php echo e($field->id); ?>}')">بازگشت</a>
+    </ul>
+    <?php
+    $i++;
+  }
+}
+?>
+<div id="costDialog" style="display: none; padding:8px;"></div>
+<script>
+    function backcosttype(id){
+    $('#loading').show();
+    ajaxSendDataWithOutBack({
+      itemId:id
+    },'<?php echo url()?>/admin/back-costtype');
+    setTimeout("responder('back-cost-type')",1500);
+    setTimeout("$('#loading').hide()",1600);
+  }
+</script>

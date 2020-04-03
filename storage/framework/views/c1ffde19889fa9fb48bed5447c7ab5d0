@@ -1,0 +1,33 @@
+<form id="editLoanForm">
+    <select name="account" style="width: 120px;margin:8px">
+        <?php foreach($accounts as $account): ?>
+            <?php if($account->id == $field->account_id): ?>
+                <option value="<?php echo e($account->id); ?>" selected><?php echo e($account->name); ?></option>
+            <?php else: ?>
+                <option value="<?php echo e($account->id); ?>"><?php echo e($account->name); ?></option>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </select>
+    <input type="hidden" value="<?php echo e($field->id); ?>" name="loan_id">
+    <label for="amount">مبلغ</label>
+    <input name="amount" id="amount" style="width: 200px;" value="<?php echo e($field->amount); ?>"><br>
+    <label for="loan_date">تاریخ وام</label>
+    <input name="loan_date" id="loan_date" value="<?php echo e(g2j($field->loan_date)); ?>" style="width: 200px;">
+    <label for="payback_date">تاریخ بازپرداخت</label>
+    <input name="payback_date" id="payback_date" value="<?php echo e(g2j($field->payback_date)); ?>" style="width: 200px;"><br><br><br>
+</form>
+<a href="#" id="editLoanFormSubmit">ثبت</a>
+<script>
+    $('#loan_date,#payback_date').datepicker({
+        changeMonth:true,
+        changeYear:true,
+        dateFormat:'yy/mm/dd'
+    });
+    $('#editLoanFormSubmit').on('click',function(){
+       ajaxyFormData('editLoanForm','<?php echo url()?>/admin/submit-edit-loan',true,'editLoanDialog');
+       setTimeout(
+            function(){
+                ajaxRequest('<?php echo url()?>/admin/getLoans/<?php echo $staff_id?>','staffLoanSummary');
+            },1000);
+    });
+</script>

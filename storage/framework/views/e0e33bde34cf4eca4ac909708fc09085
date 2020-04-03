@@ -1,0 +1,107 @@
+<form>
+    <input id="userCoopen" type="radio" style="padding: 4px;">کوپن تخفیف برای کاربر خاص<br>
+    <input id="allCooppen" type="radio" style="padding: 4px;">کوپن تخفیف برای همه مشتریان<br>
+    <input id="feeCoopen" type="radio" style="padding: 4px;">کوپن تخفیف در ازای خرید با مبلغ مشخص<br>
+    <input id="afterCoopen" type="radio" style="padding: 4px;">کوپن تخفیف بعد از  خرید با مبلغ مشخص<br>
+</form>
+    <div id="user-cooppen" style="display: none;">
+        <form id="userCoopenForm">
+            <input type="text" id="user_id" name="user_id" style="width:200px;padding:4px;margin: 4px;" placeholder="شماره اشتراک"><span id="user_name">&nbsp;</span><br>
+            <input type="text" name="userAmount" style="width:200px;padding:4px;margin: 4px;" placeholder="میزان تخفیف">
+            <input type="radio" name="userType[]" value="0" style="padding:4px;margin:8px;">درصد
+            <input type="radio" name="userType[]" value="1" style="padding:4px;margin:8px;">تومان<br>
+            <input type="text" name="expiration" style="width:200px;padding:4px;margin: 4px;" placeholder="مدت اعتبار">روز<br>
+            <a href="#" onclick="insertCoopen('user')">ثبت</a>
+        </form>
+    </div>
+    <div id="all-cooppen" style="display: none;">
+        <form id="allCoopenForm">
+            <input type="text" style="width:200px;padding:4px;margin: 4px;" name="allAmount" placeholder="میزان تخفیف">
+            <input type="radio" name="allType[]" style="padding:4px;margin:8px;">درصد
+            <input type="radio" name="allType[]" style="padding:4px;margin:8px;">تومان<br>
+            <input type="text" name="expiration" style="width:200px;padding:4px;margin: 4px;" placeholder="مدت اعتبار">روز<br>
+            <input type="text" name="max" style="width: 200px;padding:4px;margin:4px;" placeholder="حداکثر تعداد استفاده">
+            <a href="#" onclick="insertCoopen('all')">ثبت</a>
+        </form>
+    </div>
+    <div id="fee-cooppen" style="display: none;">
+        <form id="feeCoopenForm">
+            <input name="fromFee" style="width:200px;padding:4px;margin: 4px;" placeholder="از مبلغ ... تومان به بالا"><br>
+            <input type="text" style="width:200px;padding:4px;margin: 4px;" name="feeAmount" placeholder="میزان تخفیف">
+            <input type="radio" name="feeType[]" style="padding:4px;margin:8px;">درصد
+            <input type="radio" name="feeType[]" style="padding:4px;margin:8px;">تومان<br>
+            <input type="text" name="max" style="width: 200px;padding:4px;margin:4px;" placeholder="حداکثر تعداد استفاده">
+            <input type="text" name="expiration" style="width:200px;padding:4px;margin: 4px;" placeholder="مدت اعتبار">روز<br>
+            <a href="#" onclick="insertCoopen('fee')">ثبت</a>
+        </form>
+    </div>
+<div id="after-coopen" style="display: none;">
+    <form id="afterCoopenForm">
+        <input name="fromFee" style="width:200px;padding:4px;margin: 4px;" placeholder="از مبلغ ... تومان به بالا"><br>
+        <input type="text" style="width:200px;padding:4px;margin: 4px;" name="feeAmount" placeholder="میزان تخفیف">
+        <input type="radio" name="feeType[]" style="padding:4px;margin:8px;">درصد
+        <input type="radio" name="feeType[]" style="padding:4px;margin:8px;">تومان<br>
+        <input type="text" name="max" style="width: 200px;padding:4px;margin:4px;" placeholder="حداکثر تعداد استفاده">
+        <input type="text" name="expiration" style="width:200px;padding:4px;margin: 4px;" placeholder="مدت اعتبار">روز<br>
+        <a href="#" onclick="insertCoopen('after')">ثبت</a>
+    </form>
+</div>
+<span id="sp1" style="text-color:#0f0;font-weight: bold">&nbsp;</span>
+<script>
+    $('#userCoopen').on('change',function(){
+        $('#user-cooppen').css('display','block');
+        $('#all-cooppen').css('display','none');
+        $('#fee-cooppen').css('display','none');
+        $('#after-coopen').css('display','block');
+    });
+    $('#allCooppen').on('change',function(){
+        $('#all-cooppen').css('display','block');
+        $('#user-cooppen').css('display','none');
+        $('#fee-cooppen').css('display','none');
+        $('#after-coopen').css('display','block');
+
+    });
+    $('#feeCoopen').on('change',function(){
+        $('#fee-cooppen').css('display','block');
+        $('#all-cooppen').css('display','none');
+        $('#user-cooppen').css('display','none');
+        $('#after-coopen').css('display','block');
+
+    });
+    $('#afterCoopen').on('change',function(){
+        $('#fee-cooppen').css('display','none');
+        $('#all-cooppen').css('display','none');
+        $('#user-cooppen').css('display','none');
+        $('#after-coopen').css('display','block');
+
+    });
+
+
+    $('#user_id').on('keyup',function(){
+        var data = $(this).val();
+        $.ajax('<?php echo url()?>/admin/ordersNewLoadSbs',{
+           dataType:'json',
+            data:{
+                content:data
+            },
+            success:function(data){
+                $('#user_name').html(data.name);
+            }
+        });
+    });
+    function insertCoopen(id){
+        if (id == 'user'){
+            ajaxyFormData('userCoopenForm','<?php echo url()?>/admin/insert-coopen/1',false);
+            $('#sp1').html('با موفقیت ثبت شد.');
+        }else if (id == 'all'){
+            ajaxyFormData('allCoopenForm','<?php echo url()?>/admin/insert-coopen/2',false);
+            $('#sp1').html('با موفقیت ثبت شد.');
+        }else if (id == 'fee'){
+            ajaxyFormData('feeCoopenForm','<?php echo url()?>/admin/insert-coopen/3',false);
+            $('#sp1').html('با موفقیت ثبت شد.');
+        }else if (id == "after"){
+            ajaxyFormData('afterCoopenForm','<?php echo url()?>/admin/insert-coopen/4',false);
+            $('#sp1').html('با موفقیت ثبت شد.');
+        }
+    }
+</script>

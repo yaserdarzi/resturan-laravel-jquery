@@ -1,0 +1,23 @@
+<?php $__env->startSection('content'); ?>
+    <?php if(isset($fields)): ?>
+        <?php $i=0;
+        $j=1;?>
+        <?php foreach($fields as $field): ?>
+            <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+                <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo e($j); ?></li>
+                <li style="display: inline-block;padding:10px 8px;width:350px;"><?php echo e($field->name); ?></li>
+                <li style="padding:12px 8px;width:350px;display: inline-block;"><?php echo e($field->storageName); ?></li>
+                <li style="padding:12px 8px;width:350px;display: inline-block;"><?php echo e($field->amount . ' '. $field->title); ?></li>
+                <li style="padding:12px 8px;width:100px;display: inline-block;"><a href="javascript:void(0);" class="jtrashicon" title="حذف" onclick="deleteMat('<?php echo e($field->id); ?>')">حذف</a></li>
+            </ul>
+            <?php $i++;
+            $j++;?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+            <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo e(1); ?></li>
+            <li style="display: inline-block;padding:10px 8px;width:350px;"><?php echo e($field->name); ?></li>
+            <li style="padding:12px 8px;width:350px;display: inline-block;"><?php echo e($field->amount . ' '. $units->title); ?></li>
+        </ul>
+    <?php endif; ?>
+<?php echo $__env->yieldSection(); ?>

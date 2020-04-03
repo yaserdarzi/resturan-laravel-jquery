@@ -1,0 +1,73 @@
+<select id="staff" style="width:150px;margin:8px">
+    <option></option>
+    <?php if(isset($fields)): ?>
+    <?php foreach($fields as $field): ?>
+        <option value="<?php echo e($field->id); ?>"><?php echo e($field->name); ?></option>
+    <?php endforeach; ?>
+    <?php endif; ?>
+</select>
+<br><br><br>
+<div id="staffLoanSummary">
+    <?php $__env->startSection('content'); ?>
+    <a href="#" id="newLoanForm">ثبت وام</a>
+    <div id="new-loan-dialog"></div>
+    <script>
+        $('#newLoanForm').on('click',function(){
+            var selectedId = $('#staff').val();
+            ajaxSendData('new-loan-dialog',{
+                itemId:selectedId
+            },'<?php echo url()?>/admin/loans');
+        });
+    </script>
+    <br><br><br>
+    <br><ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+        <li style="display: inline-block;padding:10px 8px;width:200px;">وام</li>
+        <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ دریافت</li>
+        <li style="display: inline-block;padding:10px 8px;width:200px;">بازپرداخت</li>
+        <li style="display: inline-block;padding:10px 8px;width:200px;">عملیات</li>
+        <li style="display: inline-block;padding:10px 8px;width:100px;">&nbsp;</li>
+    </ul>
+    <?php if(isset($loans)): ?>
+        <?php foreach($loans as $stf): ?>
+            <?php if($stf->payed == 0): ?>
+                <?php $image ="reject.png";?>
+            <?php else: ?>
+                <?php $image ="accept.png";?>
+            <?php endif; ?>
+            <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+                <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo e($stf->amount); ?></li>
+                <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo e(g2j($stf->loan_date)); ?></li>
+                <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo e(g2j($stf->payback_date)); ?></li>
+                <li style="padding:12px 8px;width:200px;display: inline-block;"><img id="indicator" src="<?php echo url()?>/assets/images/<?php echo $image?>" style="width: 20px;height:20px;margin:6px;cursor:pointer;" onclick="payed('<?php echo e($stf->id); ?>','<?php echo e($stf->payed); ?>')"></li>
+                <li style="padding:12px 8px;width:100px;display: inline-block;"><a href="#" title="ویرایش" onclick="editLoan('<?php echo e($stf->id); ?>','<?php echo e($stf->staff_id); ?>')">ویرایش</a></li>
+            </ul>
+    <?php endforeach; ?>
+    <?php endif; ?>
+    <?php $__env->stopSection(); ?>
+</div>
+<div id="editLoanDialog" style="display: none;"></div>
+<script>
+    $('#staff').on('change',function(){
+        var selectedId = $(this).val();
+        ajaxRequest('<?php echo url()?>/admin/getLoans/'+selectedId,'staffLoanSummary');
+    });
+    function editLoan(loanId,staff_id){
+        ajaxSendData('editLoanDialog',{
+            itemId:loanId,
+            staffId:staff_id
+        },'<?php echo url()?>/admin/editLoan');
+        setDialog('editLoanDialog',600,400);
+    }
+
+    function payed(id,status){
+        var selectedId = $('#staff').val();
+        ajaxSendDataWithOutBack({
+            state:status,
+            itemId:id
+        },'<?php echo url()?>/admin/payLoan');
+        setTimeout(
+            function(){
+                ajaxRequest('<?php echo url()?>/admin/getLoans/'+selectedId,'staffLoanSummary');
+            },1000);
+    }
+</script>

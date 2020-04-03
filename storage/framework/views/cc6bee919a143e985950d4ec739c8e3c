@@ -1,0 +1,41 @@
+<div>
+  <a href="#" id="newMoney">ثبت درآمد</a>
+</div>
+<?php
+if (isset($fields)){
+  $i=1;
+  $j=0;
+  foreach($fields as $field){
+    $jDate = g2j($field->date);
+    ?>
+    <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+      <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i;?></li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo $field->title;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->cash;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->account_name;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $jDate;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->desc;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><a href="javascript:void(0);" title="ویرایش" onclick="editIncome('<?php echo e($field->id); ?>')">ویرایش</a></li>
+    </ul>
+    <?php
+    $i++;
+    $j++;
+  }
+}
+?>
+<div id="moneyReportDialog" style="display: none;padding:8px;"></div>
+<script>
+  $(function(){
+    $('#newMoney').on('click',function(){
+      ajaxRequest('<?php echo url()?>/admin/new-income-form','moneyReportDialog');
+      setDialog('moneyReportDialog',600,400);
+    });
+  });
+
+  function editIncome(id){
+    ajaxRequest('<?php echo url()?>/admin/edit-income/'+id,'moneyReportDialog');
+    setDialog('moneyReportDialog',600,400);
+  }
+
+</script>
+

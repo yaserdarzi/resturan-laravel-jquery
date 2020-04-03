@@ -1,0 +1,35 @@
+<form id="form">
+  <label for="name">نام و نام خانوداگی</label>
+  <input type="text" id="name" name="name" style="padding:8px;width: 200px;color:#2f2f2f"><br><br>
+  <label for="phone">شماره تماس</label>
+  <input type="text" id="phone" name="phone" style="padding:8px;width: 200px;color:#2f2f2f"><br><br>
+  <a href="#" id="submit" style="color:#F80;text-decoration: none">ثبت</a>
+</form>
+<p id="message"></p>
+<script>
+  $(function(){
+    $('#submit').on('click',function(){
+      //var data = $('#form').serialize();
+      var f = $('#name').val();
+      var s = $('#phone').val();
+      if (!$.isNumeric(s)){
+        $("#message").html('شماره تلفن وارد شده صحیح نمی باشد.');
+        return;
+      }
+
+      if (s == "" || f== ""){
+        $("#message").html('لطفا تمامی مقادیر را وارد کنید.');
+        return;
+      }
+
+      ajaxSendData('message',{
+        name:f,
+        phone:s
+      },'<?php echo url()?>/admin/submit-user');
+
+      //$.get('<?php echo url()?>/admin/submit-user',data);
+      $('#registration').dialog('destroy');
+      setTimeout(responder('submit-user'),1500);
+    });
+  });
+</script>

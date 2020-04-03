@@ -1,0 +1,45 @@
+<div>
+  <a href="#" id="addUnit">ثبت واحد</a>
+</div>
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 600px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+  <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">عنوان</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">توضیحات</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">عملیات</li>
+</ul>
+  <?php if(isset($fields)): ?>
+    <?php $i=1;?>
+    <?php foreach($fields as $field): ?>
+      <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 600px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+        <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo e($i); ?></li>
+        <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo e($field->title); ?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo e($field->desc); ?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><a href="javascript:void(0);" class="jtrashicon" title="حذف" onclick="deleteUnit('<?php echo e($field->id); ?>}')">حذف</a>/<a href="javascript:void(0);" title="ویرایش" onclick="editUnit('<?php echo e($field->id); ?>}')">ویرایش</a></li>
+      </ul>
+      <?php
+      $i++;?>
+    <?php endforeach; ?>
+    <?php endif; ?>
+<div id="unitDialog" style="padding:8px;margin:4px;display: none;"></div>
+<script>
+  $(function(){
+    $('#addUnit').on('click',function(){
+      ajaxRequest('<?php echo url()?>/admin/add-unit','unitDialog');
+      setDialog('unitDialog',600,400);
+    });
+  });
+  function  deleteUnit(id){
+    ajaxSendDataWithOutBack({
+      itemId:id
+    },'<?php echo url()?>/admin/delete-unit');
+    setTimeout("responder('add-unit')",1500);
+  }
+
+  function editUnit(id){
+    ajaxSendData('unitDialog',{
+      itemId:id
+    },'<?php echo url()?>/admin/add-unit');
+    setDialog('unitDialog',600,400);
+  }
+
+</script>

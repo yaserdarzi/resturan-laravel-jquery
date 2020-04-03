@@ -1,0 +1,28 @@
+
+      <select id="storageFilter" style="width: 140px; ">
+        <option value="0" selected>همه انبارها</option>
+        <?php foreach($storages as $storage): ?>
+        <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+        <?php endforeach; ?>
+      </select>
+      <br/><br/><br/>
+          <div id="contentContainer">
+
+  </div>
+
+<div id="ReportDialog" style="display: none;padding:8px;"></div>
+<script>
+  $('#loading').show();
+  ajaxSendData('contentContainer',{
+    storage_id:0
+  },'<?php echo url()?>/admin/filterMatByStorage');
+  $('#loading').hide();
+  $('#storageFilter').on('change',function(){
+    $('#loading').show();
+    var value = $(this).val();
+    ajaxSendData('contentContainer',{
+      storage_id:value
+    },'<?php echo url()?>/admin/filterMatByStorage');
+    $('#loading').hide();
+  });
+</script>

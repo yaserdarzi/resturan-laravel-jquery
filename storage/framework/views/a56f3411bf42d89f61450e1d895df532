@@ -1,0 +1,71 @@
+<form id="form">
+  <label for="title">عنوان</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <input type="text" id="title" name="title" style="padding:4px;margin: 4px;width:200px;" required><br>
+  <label for="desc">توضیحات</label>
+  <input type="text" id="desc" name="desc" style="padding:4px;margin: 4px;width:200px;"><br><br><br>
+  <a href="#" id="submit" style="text-decoration: none">ثبت</a><br><br>
+</form>
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 600px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+  <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+  <li style="display: inline-block;padding:10px 8px;width:250px;">عنوان</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">توضیحات</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">&nbsp;</li>
+</ul>
+<?php
+if (isset($fields)){
+  $i=1;
+  foreach($fields as $field){
+    ?>
+    <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 600px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+      <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i;?></li>
+      <li style="display: inline-block;padding:10px 8px;width:250px;"><?php echo $field->title;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->desc;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><a href="#" title="ویرایش" onclick="editMatCat('<?php echo $field->id?>')">ویرایش</a></li>
+    </ul>
+    <?php
+    $i++;
+  }
+}
+?>
+<div id="dialogPan" style="display: none;padding:8px;"></div>
+<span id="note" style="color:#2f2f2f;font-size: 8pt;">&nbsp;</span>
+<script>
+  $(function(){
+    $('#submit').on('click',function(){
+      var data = $('#form').serialize();
+      $.get('<?php echo url()?>/admin/add-mat-cat',data);
+      $('#note').html('با موفقیت ذخیره شد');
+      cleanForm('form');
+      responder('mat-cat');
+    });
+  });
+</script>
+<script>
+  function editMatCat(id){
+    $.ajax('<?php echo url()?>/admin/edit-mat-group',{
+      dataType:'json',
+      data:{
+        itemId:id
+      },
+      success:function(data){
+        $('#dialogPan').html(data.content);
+        var dial = $('#dialogPan').dialog({
+          autoOpen:false,
+          resizable: false,
+          width:600,
+          height:400,
+          hide:function(){
+            $(this).fadeOut();
+          },
+          show:function(){
+            $(this).fadeIn();
+          },
+          close:function(){
+            dial.dialog('destroy');
+          }
+        });
+        dial.dialog('open');
+      }
+    });
+  }
+</script>

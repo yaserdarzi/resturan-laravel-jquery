@@ -1,0 +1,41 @@
+<div>
+  <a href="#" id="newTransaction">ثبت درآمد</a>
+</div>
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+  <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">از حساب</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">به حساب</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">مبلغ</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">توضیحات</li>
+</ul>
+<?php
+if (isset($fields)){
+  $i=1;
+  $j=0;
+  foreach($fields as $field){
+    ?>
+    <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+      <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i;?></li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo $sourceAccounts[$j]->name;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $destAccounts[$j]->name;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->cash;?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $dates[$j];?></li>
+      <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->desc;?></li>
+    </ul>
+    <?php
+    $i++;
+    $j++;
+  }
+}
+?>
+<div id="transDialog" style="display: none;padding:8px;"></div>
+<script>
+  $(function(){
+    $('#newTransaction').on('click',function(){
+      ajaxRequest('<?php echo url()?>/admin/new-trans-form','transDialog');
+      setDialog('transDialog',600,400);
+    });
+  });
+</script>
+

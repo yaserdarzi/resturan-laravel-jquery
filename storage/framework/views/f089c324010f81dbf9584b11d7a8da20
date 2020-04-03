@@ -1,0 +1,244 @@
+<html>
+<head>
+  <title>منو و سفارش آنلاین غذا</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/food/style.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/food/font.css')); ?>">
+  <link href="<?php echo e(URL::asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')); ?>" rel="stylesheet" type="text/css"/>
+  <link href="<?php echo e(URL::asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')); ?>" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/popup/magnific-popup.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/popup/prettyPhoto.css')); ?>">
+  <link rel="stylesheet" type="text/css" href="<?php echo e(URL::asset('assets/css/tooltip/tooltipster.css')); ?>" />
+  <link rel="icon" type="image/png" href="<?php echo e(URL::asset('assets/images/favicon.png')); ?>">
+  <script type="text/javascript" src="<?php echo e(URL::asset('assets/food/jquery.min.js')); ?>"></script>
+  <script src="<?php echo e(URL::asset('assets/popup/jquery.magnific-popup.min.js')); ?>"></script>
+  <script src="<?php echo e(URL::asset('assets/js/jquery.tooltipster.min.js')); ?>" type="text/javascript"></script>
+  <script src="<?php echo e(URL::asset('assets/popup/jquery.prettyPhoto.js')); ?>"></script>
+  <script src="http://demo.phpgang.com/lazy-loading-images-jquery/jquery.devrama.lazyload.min-0.9.3.js"></script>
+</head>
+<?php
+if (isset($site_offline) && $site_offline!=""){
+  echo "<div style='margin:50px auto;'><p>متاسفانه فعلا امکان سفارش گیری آنلاین وجود ندارد. بعدا تلاش فرمائید.</p></div>";
+  exit;
+}
+?>
+<?php
+$currentTime = getActuallyCurrentTime();
+if ($services->end_time == "00:00:00"){
+  $services->end_time = "23:59:59";
+}
+$startTime = explode(':',$services->start_time);
+$startTime = implode('',$startTime);
+$endTime = explode(':',$services->end_time);
+$endTime = implode('',$endTime);
+if ($currentTime < $startTime|| $currentTime >$endTime){
+  $onclick = "alert('ساعات سفارش گیری بین $services->start_time و $services->end_time می باشد.')";
+}else{
+  $onclick = "submitOrder()";
+}
+?>
+<body>
+<div class="header">
+  <ul class="menu-entry">
+    <?php
+    if (isset($menu)){
+      foreach($menu as $m){
+        ?>
+        <li><a href="#<?php echo $m->title;?>" class="landing"><?php echo $m->title;?></a></li>
+        <?php
+      }
+    }
+    ?>
+  </ul>
+</div>
+<div class="content">
+  <div class="fl">
+    <?php
+    foreach($menu as $men){?>
+      <br><h2 class="tooltip" id="<?php echo $men->title?>" onmouseover="showTooltip('<?php echo $men->title?>','<?php echo $men->desc;?>')" id="<?php echo $men->title;?>"><?php echo $men->title;?></h2><br>
+      <?php
+      foreach ($foods as $food) {
+        foreach ($food as $foo) {
+          if ($foo->cat_id == $men->id) {
+            ?>
+            <div class="menu-card">
+                <a href="<?php echo url()."/uploads/food_images/".$foo->image;?>" rel="prettyPhoto[gallery1]">
+                  <img data-lazy-src="<?php echo url()."/uploads/food_thumb/".$foo->thumb;?>" class="showcase" src="<?php echo url()."/uploads/food_thumb/".$foo->thumb;?>">
+                </a>
+              <div class="contentContainer">
+                <p class="foodname"><?php echo $foo->title;?></p>
+                <div class="desc"><span><?php echo $foo->desc;?></span><br>
+                  <i class="fa fa-clock-o" style="margin-top:8px;"></i><span style="margin-right: 4px;">زمان آماده سازی:<?php echo $foo->cook_time?>دقیقه</span>
+                </div>
+                <div class="footer">
+                  <div class="footer-fr">
+                    <span><?php echo $foo->price?></span>
+                  </div>
+                  <div class="footer-fl">
+                    <div class="add" id="<?php echo $foo->title;?>" onclick="addToList('<?php echo $foo->title;?>')"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php
+          }
+        }
+      }
+      ?>
+      <?php
+    }
+    ?>
+  </div>
+  <div class="fr" id="fr">
+    <span class="bold">سبد خرید</span><br>
+    <div id="orderList"></div>
+    <div id="total">
+      <span>جمع کل:</span>
+      <span id="totalPan"></span>
+      <span class="button" id="submit" onclick="<?php echo $onclick?>">سفارش</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+  $(function(){
+    $.DrLazyload();
+    $('.tooltip').tooltipster();
+  });
+</script>
+<script>
+  $(function(){
+    $("a[rel^='prettyPhoto']").prettyPhoto({
+      social_tools: false
+    });
+  });
+</script>
+<script>
+  var name = "";
+  var count = "";
+  var price = "";
+  function submitOrder(){
+    var fname = document.getElementsByClassName('fname');
+    var total = $('#totalPan').text();
+    if (fname.length < 1){
+      return;
+    }
+    for (var i=0;i<fname.length;i++){
+      var counts = document.getElementsByClassName('count');
+      var prices = document.getElementsByClassName('price');
+      for (i=0;i<counts.length;i++){
+        name += '|'+fname[i].innerHTML+'|';
+        count += '|'+counts[i].innerHTML+'|';
+      }
+      for (var j=0;j<prices.length;j++){
+        price += '|'+prices[j].innerHTML+'|';
+      }
+    }
+    $.ajax('<?php echo url();?>/food/preorder',{
+      dataType:'json',
+      data:{
+        foods:name,
+        counts:count,
+        prci:price,
+        totalfee:total
+      },
+      success:function(data){
+        console.log(data.redirect);
+        window.location.href = data.redirect;
+      }
+    })
+  }
+</script>
+<script>
+  var newTotal=0;
+  var orders = new Object();
+  function addToList(id){
+    var count='count';
+    $.ajax('<?php echo url();?>/food/addlist',{
+      dataType:'json',
+      data:{
+        food:id
+      },
+      success:function(data){
+        if ($('#orderList #'+data.id).length){
+          var newId = "count"+data.id;
+          var value = $('#orderList #'+data.id+' #'+newId).text();
+          var numValue = parseInt(value);
+          var newValue = numValue+1;
+          var total = $('#totalPan').text();
+          var numTotal = parseInt(total);
+          var price = parseInt(data.price);
+          newTotal = price+numTotal;
+          $('#totalPan').text(newTotal);
+          $('#orderList #'+data.id+' #'+newId).text(newValue);
+        }else{
+          var newId = "count"+data.id;
+          var newPrice = parseInt(data.price);
+          $('#orderList').append('<div class="menuItem" id="'+data.id+'"><span class="fname">'+data.foodname+'</span><span class="price">'+data.price+'</span><div class="dContainer"><span class="count" id="'+newId+'">'+1+'</span><span class="fa fa-plus up" id="up" onclick="plusRefelctor('+data.id+','+newPrice+')"></span></span><span class="fa fa-minus down" id="down" onclick="minusRefelctor('+data.id+','+newPrice+')"></span></div></div>');
+          var total = $('#totalPan').text();
+          var numTotal = parseInt(total);
+          if (isNaN(numTotal) || numTotal==0){
+            newTotal =data.price;
+          }else{
+            var price = parseInt(data.price);
+            newTotal = price+numTotal;
+          }
+          $('#totalPan').text(newTotal);
+        }
+      }
+    })
+  }
+</script>
+<script>
+  function plusRefelctor(id,price){
+    var value = $("#count"+id).text();
+    var numValue=parseInt(value);
+    var newValue=numValue+1;
+    var total = $('#totalPan').text();
+    var numTotal = parseInt(total);
+    var finalPrice = numTotal+price;
+    $('#totalPan').text(finalPrice);
+    $("#count"+id).text(""+newValue);
+  }
+  function minusRefelctor(id,price){
+    var value = $("#count"+id).text();
+    var numValue=parseInt(value);
+    var newValue=numValue-1;
+    if (newValue==0){
+      $('#'+id).remove();
+    }
+    var total = $('#totalPan').text();
+    var numTotal = parseInt(total);
+    var finalPrice = numTotal-price;
+    $('#totalPan').text(finalPrice);
+    $("#count"+id).text(""+newValue);
+  }
+</script>
+<script>
+  $(function() {
+    $('a[href*=#]:not([href=#])').click(function() {
+      if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+        var target = $(this.hash);
+        target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+        if (target.length) {
+          $('html,body').animate({
+            scrollTop: target.offset().top
+          }, 1000);
+          return false;
+        }
+      }
+    });
+  });
+</script>
+<script>
+    function showTooltip(id,content){
+      $('#'+id).tooltipster({
+        animation: 'grow',
+        contentAsHTML: true,
+        interactive: true,
+        multiple:true,
+        content: $("<span>"+content+"</span>")
+      });
+    }
+</script>

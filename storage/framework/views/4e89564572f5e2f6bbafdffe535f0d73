@@ -1,0 +1,60 @@
+<form id="c-coupon-form">
+	<div class="row">
+		<label>نوع</label>
+		<select id="type" name="type" style="width:140px;padding:4px">
+			<option value="1">هنگام خرید</option>
+			<option value="2">بعد از خرید</option>
+		</select>
+	</div>
+
+	<div class="row">
+		<label>مدت اعتبار:</label>
+		<input type="text" name="dates" id="dates" style="width:250px;padding:4px">روز
+	</div>
+
+	<div class="row">
+		<label>نوع تخفیف:</label>
+		<select name="dis_type" id="dis_type" style="width:140px;padding:4px">
+			<option value="1">درصد</option>
+			<option value="2">تومان</option>
+		</select>
+	</div>
+
+	<div class="row">
+		<label>حداکثر استفاده برای هر کاربر</label>
+		<input type="text" name="max_per_user" id="max" style="width:140px;padding:4px">
+	</div>
+
+	<div class="row">
+		<label>میزان تخفیف:</label>
+		<input type="text" name="discount" id="discount" style="width:250px;padding:4px">
+	</div>
+	<div class="row">
+		<label>از مبلغ:</label>
+		<input type="text" name="from_fee" id="from_fee" style="width:250px;padding:4px">
+		<label>تا مبلغ:</label>
+		<input type="text" name="to_fee" id="to_fee" style="width:250px;padding:4px">
+	</div>
+	<span id="cpr"></span>
+	<a href="javascript:void(0);" id="submit-c">ثبت</a>
+</form>
+<script type="text/javascript">
+	$('#submit-c').on('click',function(){
+		var type = $('#type').val();
+		var dates = $('#dates').val();
+		var dis_type = $('#dis_type').val();
+		var discount = $('#discount').val();
+		var from_fee = $('#from_fee').val();
+		var to_fee = $('#to_fee').val();
+		var max = $('#max').val();
+		ajaxSendData('cpr',{
+			type:type,
+			dates:dates,
+			dis_type:dis_type,
+			discount:discount,
+			from_fee:from_fee,
+			to_fee:to_fee,
+			max:max
+		},'/admin/add-c-coupon');
+	});
+</script>

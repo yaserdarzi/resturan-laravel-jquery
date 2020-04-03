@@ -1,0 +1,56 @@
+<form id="newCostForm">
+  <label for="group">نوع هزینه:</label>
+  <?php if(isset($transactions)): ?>
+    <input type="hidden" value="<?php echo e($transactions->id); ?>" name="edit" id="edit">
+  <?php endif; ?>
+  <select id="group" name="group" style="width: 140px;">
+    <?php
+    if (isset($fields)){
+    foreach($fields as $field){
+    ?>
+    <?php if(isset($transactions)): ?>
+      <?php if($transactions->subType == $field->id): ?>
+        <option value="<?php echo $field->id?>" selected><?php echo $field->title?></option>
+      <?php else: ?>
+        <option value="<?php echo $field->id?>"><?php echo $field->title?></option>
+      <?php endif; ?>
+      <?php else: ?>
+        <option value="<?php echo $field->id?>"><?php echo $field->title?></option>
+    <?php endif; ?>
+    <?php
+    }
+    }
+    ?>
+  </select><br>
+  <label for="bank">حساب بانکی:</label>
+  <select id="bank" name="bank" style="width: 140px;">
+    <?php
+    if (isset($accounts)){
+    foreach($accounts as $account){
+    ?>
+      <?php if(isset($transactions)): ?>
+        <?php if($transactions->acc_id == $account->id): ?>
+          <option value="<?php echo $account->id?>" selected><?php echo $account->name?></option>
+        <?php else: ?>
+          <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+        <?php endif; ?>
+        <?php else: ?>
+        <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+      <?php endif; ?>
+    <?php
+    }
+    }
+    ?>
+  </select><br>
+  <label for="cash">مبلغ:</label>
+  <input id="cash" type="text" name="cash" style="width:200px;color:#2f2f2f;margin:4px;padding:4px;" value="<?php echo e(isset($transactions) ? $transactions->cash : ''); ?>"><br>
+  <label for="desc">توضیحات:</label>
+  <input id="desc" type="text" name="desc" style="width:200px;color:#2f2f2f;margin:4px;padding:4px;" value="<?php echo e(isset($transactions) ? $transactions->desc : ''); ?>"><br>
+</form>
+<a href="#" id="submit">ثبت</a>
+<script>
+  $('#submit').on('click',function(){
+    ajaxyFormData('newCostForm','<?php echo url()?>/admin/submit-new-cost',true,'costReportDialog');
+    setTimeout("responder('accounting-add-cost')",1500);
+  });
+</script>

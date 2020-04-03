@@ -1,0 +1,86 @@
+<br>
+<div>
+  <input type="text" id="cctt" placeholder="فیلتر براساس شماره اشتراک" style="width:200px;padding:4px;">
+  <input type="text" id="name" placeholder="فیلتر براساس نام مشتری" style="width:200px;padding:4px;">
+  <input type="text" id="submit_date" placeholder="فیلتر براساس تاریخ ثبت نام" style="width:200px;padding:4px;">
+  <input type="text" id="last_visit" placeholder="فیلتر براساس آخرین بازدید" style="width:200px;padding:4px;">
+  <a href="javascript:void(0);" onclick="submitFilters()" style="color:#f80;">اعمال</a>
+  <a href="javascript:void(0);" class="jtrashicon" title="حذف" onclick="deleteFilters()" style="color:#f80;">حذف فیلتر</a>
+</div><br><br><br>
+<label>تخصیص کوپن:</label>
+<select id="at_coupons" style="width:140px;padding:4px;">
+  <?php if(isset($coupons)): ?>
+      <option value=""></option>
+    <?php foreach($coupons as $coupon): ?>
+      <option value="<?php echo e($coupon->code); ?>"><?php echo e($coupon->code); ?></option>
+      <?php endforeach; ?>
+    <?php endif; ?>
+</select>
+<a href="javascript:void(0);" onclick="addCoupon()" style="color:#f80;">تخصیص کوپن</a>
+<br><br><br><br><br><br>
+<div id="customersContainer">
+  <ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+      <li style="display: inline-block;padding:10px 8px;width:100px;">نام</li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;">شماره تماس</li>
+      <li style="display: inline-block;padding:10px 8px;width:100px;">شماره اشتراک</li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ ثبت نام</li>
+      <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ آخرین بازدید</li>
+  </ul>
+  <div id="cnt">
+  <?php $__env->startSection('customers'); ?>
+    <input type="hidden" id="query" value="<?php echo $query?>">
+  <?php if(isset($customers)): ?>
+    <?php foreach($customers as $customer): ?>
+      <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+          <li style="display: inline-block;padding:10px 8px;width:100px;"><?php echo e($customer->name); ?></li>
+          <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo e($customer->phone); ?></li>
+          <li style="display: inline-block;padding:10px 8px;width:100px;"><?php echo e($customer->cctt); ?></li>
+          <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo e(g2j($customer->submit_date)); ?></li>
+          <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo e(g2j($customer->last_visit)); ?></li>
+      </ul>
+  <?php endforeach; ?>
+  <?php endif; ?>
+<?php echo $__env->yieldSection(); ?>
+  </div>
+  <span id="showing"></span>
+</div>
+<script>
+  $('#submit_date').datepicker({
+    changeMonth:true,
+    changeYear:true,
+    dateFormat:'yy/mm/dd'
+  });
+  $('#last_visit').datepicker({
+    changeMonth:true,
+    changeYear:true,
+    dateFormat:'yy/mm/dd'
+  });
+  function submitFilters(){
+    var cc = $('#cctt').val();
+    var name = $('#name').val();
+    var date = $('#submit_date').val();
+    var lv = $('#last_visit').val();
+
+    ajaxSendData('cnt',{
+      cctt:cc,
+      user_name:name,
+      su_date:date,
+      lv_date:lv
+    },"<?php echo e(url('/admin/filter-customers')); ?>");
+  }
+
+  function deleteFilters(){
+    responder('customers');
+  }
+
+  function addCoupon(){
+    var coupon = $('#at_coupons').val();
+    var query = $('#query').val();
+
+    ajaxSendData('showing',{
+      coupon:coupon,
+      query:query
+    },'/admin/attachCoupon');
+  }
+
+</script>

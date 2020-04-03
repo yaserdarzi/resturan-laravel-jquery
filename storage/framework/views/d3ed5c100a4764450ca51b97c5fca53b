@@ -1,0 +1,59 @@
+<form id="newMoneyForm">
+  <?php if(isset($incomes) && $incomes!=""): ?>
+    <input type="hidden" value="<?php echo e($incomes->id); ?>" name="edit">
+  <?php endif; ?>
+  <label for="group">نوع درآمد:</label>
+  <select id="group" name="group" style="width: 140px;">
+    <?php
+    if (isset($fields)){
+      foreach($fields as $field){
+        ?>
+        <?php if(isset($incomes)): ?>
+          <?php if($incomes->subType == $field->id): ?>
+          <option value="<?php echo $field->id?>" selected><?php echo $field->title?></option>
+        <?php else: ?>
+          <option value="<?php echo $field->id?>"><?php echo $field->title?></option>
+        <?php endif; ?>
+        <?php else: ?>
+            <option value="<?php echo $field->id?>" selected><?php echo $field->title?></option>
+          <?php endif; ?>
+        <?php
+      }
+    }
+    ?>
+  </select><br>
+  <label for="bank">حساب بانکی:</label>
+  <select id="bank" name="bank" style="width: 140px;">
+    <?php
+    if (isset($accounts)){
+      foreach($accounts as $account){
+        ?>
+      <?php if(isset($incomes)): ?>
+        <?php if($incomes->acc_id == $account->id): ?>
+        <option value="<?php echo $account->id?>" selected><?php echo $account->name?></option>
+        <?php else: ?>
+          <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+      <?php endif; ?>
+      <?php else: ?>
+        <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+    <?php endif; ?>
+      <?php
+      }
+    }
+    ?>
+  </select><br>
+  <label for="cash">مبلغ:</label>
+  <input id="cash" type="text" name="cash" style="width:200px;color:#2f2f2f;margin:4px;padding:4px;" value="<?php echo e(($incomes) ? $incomes->cash : ''); ?>"><br>
+  <label for="desc">توضیحات:</label>
+  <input id="desc" type="text" name="desc" style="width:200px;color:#2f2f2f;margin:4px;padding:4px;" value="<?php echo e(($incomes) ? $incomes->desc : ''); ?>"><br>
+</form>
+<a href="#" id="submit">ثبت</a>
+<script>
+  $(function(){
+    $('#submit').on('click',function(){
+      ajaxyFormData('newMoneyForm','<?php echo url()?>/admin/submit-income',true,'moneyReportDialog');
+      setTimeout("responder('accounting-add-income')",1500);
+      //responder('money')
+    });
+  });
+</script>

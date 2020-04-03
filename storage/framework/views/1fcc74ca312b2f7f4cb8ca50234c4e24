@@ -1,0 +1,20 @@
+<input type="checkbox" name="social" id="socialMedia">شبکه های اجتماعی 
+<div id="socialMediaContainer" style="display: none;">
+  <form id="socialForm">
+    <input type="text" style="width:200px;padding:4px;margin:4px;" name="socialTitle" placeholder="عنوان">
+    <input type="text" style="width:200px;padding:4px;margin:4px;" name="socialDesc" placeholder="توضیحات">
+    <input type="text" style="width:200px;padding:4px;margin:4px;" name="socialUrl" placeholder="آدرس صفحه">
+    <a href="#" onclick="sendSubmit('socialForm')">ثبت</a>
+  </form>
+</div>
+<span id="successMessage" style="color:#2f0;font-weight:bold;">&nbsp;</span>
+<script>
+  $('#socialMedia').on('click',function(){
+    $('#socialMediaContainer').css('display','block');
+  });
+  function sendSubmit(formId){
+    ajaxyFormData(formId,'<?php echo url()?>/admin/user-fields/'+formId,false);
+    $('#successMessage').html('با موفقیت ذخیره شد');
+    $('#'+formId).find("input[type=text], textarea").val("");
+  }
+</script>

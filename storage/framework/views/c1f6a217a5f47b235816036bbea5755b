@@ -1,0 +1,55 @@
+<form id="echangematerialForm">
+<label for="firstWarehouse">از انبار:</label>
+<select id="firstWarehouse" name="firstWarehouse" style="width:140px;">
+    <option selected></option>
+    <?php foreach($storages as $storage): ?>
+        <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+    <?php endforeach; ?>
+</select>
+<div id="forFirstWareHouse">
+    <?php $__env->startSection('firstMaterials'); ?>
+        <select id="firstMaterials" name="firstMaterials" style="width:140px;">
+            <?php if(isset($materials)): ?>
+            <?php foreach($materials as $material): ?>
+                <option value="<?php echo e($material->mat_ref); ?>"><?php echo e($material->name); ?></option>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    <?php echo $__env->yieldSection(); ?>
+</div>
+
+<label for="secondWarehouse">به انبار:</label>
+<select id="secondWarehouse" name="secondWarehouse" style="width:140px;">
+    <option selected></option>
+    <?php foreach($storages as $storage): ?>
+        <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+    <?php endforeach; ?>
+</select>
+<label for="amount">میزان:</label>
+<input type="text" id="amount" name="amount" style="width:200px;">
+    </form>
+
+
+<a href="#" class="jsubmit" id="begin"><i class="fa fa-check"></i></a>
+
+<div id="ReportDialog" style="display: none;padding:8px;"></div>
+<script>
+    $('#firstWarehouse').on('change',function(){
+        var val = $(this).val();
+        ajaxSendData('forFirstWareHouse',{
+            id:val,
+            target:'first'
+        },'<?php echo url()?>/admin/loadMaterials');
+    });
+
+    $(function(){
+        $('#begin').on('click',function(){
+            $('#loading').show();
+            ajaxyFormData('echangematerialForm','<?php echo url()?>/admin/exchangeMaterials',true,'ReportDialog');
+            setTimeout("responder('warehouse-inventory')",1500);
+            setTimeout("$('#loading').hide()",1600);
+        });
+    });
+</script>
+
+<a href="javascript:void(0);" id=""></a>

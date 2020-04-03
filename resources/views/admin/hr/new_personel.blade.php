@@ -1,0 +1,61 @@
+<form id="form">
+  @if(isset($staff) && $staff!="")
+    <input type="hidden" name="edit" value="{{$staff->id}}">
+  @endif
+  <label for="name">نام و نام خانوادگی</label>
+  <input name="name" id="name" style="width: 200px;padding:4px;margin: 8px;" required value="{{isset($staff) ? $staff->name : ''}}" >
+  <label for="father">نام پدر</label>
+  <input name="father" id="father" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->father_name : ''}}">
+  <label for="ssid">شماره شناسنامه</label>
+  <input name="ssid" id="ssid" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->ssid : ''}}"><br>
+  <label for="nationalCode">کدملی</label>
+  <input name="nationalCode" id="nationalCode" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->national_code : ''}}">
+  <label for="birthday">تاریخ تولد</label>
+  <input name="birthday" id="birthday" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->birthday : ''}}">
+  <label for="insurance">شماره بیمه</label>
+  <input name="insurance" id="insurance" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->insurance_code : ''}}"><br>
+  <label for="lastWork">محل کار قبلی</label>
+  <input name="lastWork" id="lastWork" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->last_worked : ''}}">
+  <label for="position">سمت</label>
+  <input name="position" id="position" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->position : ''}}">
+  <label for="bgDate">تاریخ شروع همکاری</label>
+  <input name="bgDate" id="bgDate" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->bg_date : ''}}"><br>
+  <label for="enDate">تاریخ پایان همکاری</label>
+  <input name="enDate" id="enDate" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->en_date : ''}}">
+  <label for="salary">حقوق</label>
+  <input name="salary" id="salary" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->salary : ''}}"><br>
+  <label for="workHours">مجموع ساعات کاری در ماه:</label>
+  <input name="workHours" id="workHours" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->work_hours : ''}}">
+  <label for="vacations">سقف ساعات مرخصی:</label>
+  <input name="vacations" id="vacations" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->max_vacation : ''}}"><br>
+  <label for="paydayMonth">روز پرداخت حقوق در ماه: </label>
+  <input name="paydayMonth" id="paydayMonth" style="width: 200px;padding:4px;margin: 8px;" value="{{isset($staff) ? $staff->payday : ''}}"><br>
+</form>
+<a href="#" class="jsubmit" id="Submit"><i class="fa fa-check"></i></a>
+<script>
+  $(function(){
+    $('#Submit').on('click',function(){
+      $('#loading').show();
+      ajaxyFormData('form','<?php echo url()?>/admin/new-personel',true,'Dialog');
+      setTimeout("responder('personelList')",1500);
+      setTimeout("$('#loading').hide()",1600);
+    });
+  });
+  $(function(){
+    $('#birthday').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'yy/mm/dd'
+    });
+    $('#bgDate').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'yy/mm/dd'
+    });
+    $('#enDate').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'yy/mm/dd'
+    });
+  });
+</script>

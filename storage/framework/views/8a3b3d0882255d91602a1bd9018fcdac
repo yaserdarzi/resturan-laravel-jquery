@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>مدارک ثبت شده کارمند</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="<?php echo e(URL::asset('assets/food/jquery.min.js')); ?>"></script>
+    <script src="<?php echo e(URL::asset('assets/popup/jquery.prettyPhoto.js')); ?>"></script>
+    <link rel="stylesheet" href="<?php echo e(URL::asset('assets/popup/prettyPhoto.css')); ?>">
+
+</head>
+<body>
+<form method="post" action="<?php echo e(url('/admin/addEvidence/'.$id)); ?>" enctype="multipart/form-data">
+    <input type="hidden" name="_token" value="<?php echo e(Session::token()); ?>">
+    <input type="file" name="eve">
+    <button type="submit">ثبت</button>
+</form>
+<?php if(isset($images)): ?>
+    <?php foreach($images as $image): ?>
+        <div style="width:200px;height:200px;display:inline-block;margin:8px;position: relative;text-align: center">
+            <a href="<?php echo e(url().$image->location); ?>" rel="prettyPhoto[gallery1]">
+                <img src="<?php echo e(url().$image->location); ?>" style="width:200px;height:200px;position: absolute">
+            </a>
+            <a href="<?php echo e(url()); ?>/admin/deleteEve/<?php echo e($image->id); ?>" style="width:100%;z-index: 99;position: absolute;color:#f80;font-weight:bold;bottom: 0;margin: 5px auto;">حذف</a>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <h3>تصویری پیدا نشد.</h3>
+<?php endif; ?>
+</body>
+</html>
+<script>
+    $(function(){
+        $("a[rel^='prettyPhoto']").prettyPhoto({
+            social_tools: false
+        });
+    });
+</script>

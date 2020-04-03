@@ -1,0 +1,91 @@
+<a href="#" style="color:#f80;text-decoration: none" onclick="dialog()">ثبت مرخصی</a><br><br>
+<div style="padding:8px;text-align: center">
+  <div style="display:inline-block;width:15px;height:15px;background-color:#ff0;">&nbsp;</div>
+  <span style="margin-left: 20px;">ثبت شده</span>
+  <div style="display:inline-block;width:15px;height:15px;background-color:#0f0;">&nbsp;</div>
+  <span style="margin-left: 20px;">تایید شده</span>
+  <div style="display:inline-block;width:15px;height:15px;background-color:#f00;">&nbsp;</div>
+  <span style="margin-left: 20px;">تایید نشده</span>
+</div><br><br>
+<ul style="display: flex;justify-content: space-between;background-color:#2f2f2f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#eee;min-width:500px;">
+  <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+  <li style="display: inline-block;padding:10px 8px;width:250px;">نام</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ شروع</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ پایان</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">ساعت شروع</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">ساعت پایان</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">توضیحات</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">وضعیت</li>
+  <li style="display: inline-block;padding:10px 8px;width:200px;">تغییر وضعیت</li>
+</ul>
+<?php
+  if (isset($fields)){
+    $i=0;
+    $counter = 1;
+    foreach($fields as $field){
+        if (isset($staff_name[$i])){
+      $date = explode('-',$field->from_date);
+      $jDate = gregorian_to_jalali($date[0],$date[1],$date[2],'/');
+      $toDate = explode('-',$field->to_date);
+      $toJdate = gregorian_to_jalali($toDate[0],$toDate[1],$toDate[2],'/');
+      ?>
+      <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; background-color:<?php echo $colors[$i];?>;margin: 0 auto;text-align: center; color:#2f2f2f;">
+        <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $counter;?></li>
+        <li style="padding:12px 8px;width:250px;display: inline-block;"><?php echo $staff_name[$i]->name?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $jDate?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $toJdate?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->from_time?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->to_time?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $field->desc?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $condition[$i]->title?></li>
+        <li style="padding:12px 8px;width:200px;display: inline-block;"><img src="<?php echo e(URL::asset('assets/images/accept.png')); ?>" style="width: 20px;height:20px;margin:6px;cursor:pointer;" onclick="requestCoordinator('<?php echo $field->id?>','accept')"><img src="<?php echo e(URL::asset('assets/images/reject.png')); ?>" style="width: 20px;height:20px;margin:6px;cursor:pointer;" onclick="requestCoordinator('<?php echo $field->id?>','reject')"></li>
+      </ul>
+      <?php
+      $i++;
+      $counter++;
+    }
+  }
+              }
+?>
+<div id="dialog-parent" style="display: none;overflow: scroll"></div>
+<script>
+  function dialog(){
+    $.ajax('<?php echo url()?>/admin/submit-new-leave',{
+      dataType:'json',
+      cache:false,
+      success:function(data){
+        $('#dialog-parent').html(data.content);
+        var dial = $('#dialog-parent').dialog({
+          autoOpen:false,
+          resizable: false,
+          width:600,
+          height:400,
+          hide: function () {
+            $(this).fadeOut();
+          },
+          show:  function () {
+            $(this).fadeIn();
+          },
+          close: function(){
+            dial.dialog('destroy');
+          }
+        });
+      dial.dialog('open');
+      }
+    });
+  }
+</script>
+<script>
+  function requestCoordinator(id,requestType){
+    $.ajax('<?php echo url()?>/admin/change-vacation',{
+      dataType:'json',
+      data:{
+        type:requestType,
+        staff_id:id
+      },
+      success:function(data){
+        $('#page-content').html(data.content);
+      }
+    });
+  }
+</script>

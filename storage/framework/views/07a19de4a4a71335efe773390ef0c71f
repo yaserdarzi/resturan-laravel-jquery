@@ -1,0 +1,76 @@
+<label for="firstWarehouse">از انبار:</label>
+<select id="firstWarehouse" style="width:140px;">
+    <option selected></option>
+    <?php foreach($storages as $storage): ?>
+        <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+    <?php endforeach; ?>
+</select>
+<div id="forFirstWareHouse">
+    <?php $__env->startSection('firstMaterials'); ?>
+        <select id="firstMaterials" style="width:140px;">
+            <?php if(isset($materials)): ?>
+            <?php foreach($materials as $material): ?>
+                <option value="<?php echo e($material->mat_ref); ?>"><?php echo e($material->name); ?></option>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    <?php echo $__env->yieldSection(); ?>
+</div>
+
+<label for="secondWarehouse">به انبار:</label>
+<select id="secondWarehouse" style="width:140px;">
+    <option selected></option>
+    <?php foreach($storages as $storage): ?>
+        <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+    <?php endforeach; ?>
+</select>
+<div id="forSecondWarehouse">
+    <?php $__env->startSection('secondMaterials'); ?>
+        <select id="secondMaterials" style="width:140px;">
+            <?php if(isset($materials)): ?>
+            <?php foreach($materials as $material): ?>
+                <option value="<?php echo e($material->mat_ref); ?>"><?php echo e($material->name); ?></option>
+            <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    <?php echo $__env->yieldSection(); ?>
+</div>
+<label for="amount">میزان:</label>
+<input type="text" id="amount" style="width:200px;">
+<a href="javascript:void(0);" id="begin">انتقال</a>
+<p id="messageBack"></p>
+<script>
+    $('#firstWarehouse').on('change',function(){
+        var val = $(this).val();
+        ajaxSendData('forFirstWareHouse',{
+            id:val,
+            target:'first'
+        },'<?php echo url()?>/admin/loadMaterials');
+    });
+
+    $('#secondWarehouse').on('change',function(){
+        var val = $(this).val();
+        ajaxSendData('forSecondWarehouse',{
+            id:val,
+            target:'second'
+        },'<?php echo url()?>/admin/loadMaterials');
+    });
+
+    $('#begin').on('click',function(){
+        var fromStorage = $('#firstWarehouse').val();
+        var toStorage = $('#secondWarehouse').val();
+        var famount = $('#amount').val();
+        var firstMat = $('#firstMaterials').val();
+        var secondMaterial = $('#secondMaterials').val();
+
+       ajaxSendData('messageBack',{
+           from_storage:fromStorage,
+           to_storage:toStorage,
+           amount:famount,
+           first_mat:firstMat,
+           second_mat:secondMaterial
+       },'<?php echo url()?>/admin/exchangeMaterials');
+
+    });
+
+</script>

@@ -1,0 +1,126 @@
+<form id="registerForm">
+    <label for="field_type">نوع فیلد:</label>
+    <select id="field_type" name="field_type" style="width:140px;padding:4px;" required>
+        <?php
+        if (isset($fields)){
+            foreach($fields as $field){
+                ?>
+                <option value="<?php echo $field->id;?>"><?php echo $field->title?></option>
+                <?php
+            }
+        }
+        ?>
+    </select><br>
+    <label for="en_name">نام انگلیسی:</label>
+    <input type="text" name="en_name" id="en_name" style="width:200px;padding:4px;margin:4px;"><br>
+    <label for="fa_title">نام فارسی:</label>
+    <input type="text" name="title" id="fa_title" style="width:200px;padding:4px;margin:4px;"><br>
+    <div id="specific">
+        <label for="def_value">مقدار پیش فرض:</label>
+        <input type="text" name="def_value" id="def_value" style="width:200px;padding:4px;margin:4px;"><br>
+    </div>
+    <input type="checkbox" name="required" style="padding:4px;margin:4px;">اجباری<br>
+    <div id="dropdown" style="display:none">
+        <input type="text" name="dropdownValue[]" style="width:200px;padding:4px;margin:4px;" placeholder="عنوان">
+        <i class="fa fa-plus" style="cursor: pointer;" id="newDdValue">&nbsp;</i>
+    </div>
+    <a href="#" id="submitRegisterForm">ثبت</a>
+</form>
+<span id="message" style="color:#2f0;font-weight:bold;">&nbsp;</span>
+<hr>
+<div>
+    <ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#2f2f2f;min-width:500px;">
+        <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+        <li style="display: inline-block;padding:10px 8px;width:250px;">عنوان</li>
+        <li style="display: inline-block;padding:10px 8px;width:300px;">نوع</li>
+        <li style="display: inline-block;padding:10px 8px;width:350px;">مقدار پیش فرض</li>
+        <li style="display: inline-block;padding:10px 8px;width:150px;">اجباری</li>
+        <li style="display: inline-block;padding:10px 8px;width:200px;">وضعیت</li>
+    </ul>
+    <?php
+        if (isset($user_fields)){
+            $i=0;
+            $value="";
+            foreach($user_fields as $user_field){
+                $str = $user_field->default_value;
+                    if (strpos($str,'|')!==false){
+                    $defualtValue = explode('|',$user_field->default_value);
+                        foreach($defualtValue as $df){
+                            if ($df == ""){
+                                continue;
+                            }
+                            $value .=$df.',';
+                        }
+                }else{
+                        $value = $user_field->default_value;
+                }
+                if ($user_field->required == 1){
+                    $required = "بله";
+                }else{
+                    $required = "خیر";
+                }
+                ?>
+                <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px;margin: 0 auto;text-align: center; color:#2f2f2f;">
+                    <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i+1;?></li>
+                    <li style="padding:12px 8px;width:250px;display: inline-block;"><?php echo $user_field->title?></li>
+                    <li style="padding:12px 8px;width:300px;display: inline-block;"><?php echo $field_types[$i]->title;?></li>
+                    <li style="padding:12px 8px;width:350px;display: inline-block;"><?php echo $value?></li>
+                    <li style="padding:12px 8px;width:150px;display: inline-block;"><?php echo $required?></li>
+                    <li style="padding:12px 8px;width:200px;display: inline-block;">
+                        <?php
+                        if ($user_field->enabled == 1){
+                            ?>
+                            <span>فعال</span>
+                            <a href="#" onclick="deactivateField('<?php echo $user_field->id?>')"> / غیرفعال کردن</a>
+                            <?php
+                        }else{
+                            ?>
+                            <span>غیر فعال</span>
+                            <a href="#" onclick="activateField('<?php echo $user_field->id?>')"> / فعال کردن</a>
+                            <?php
+                        }
+                        ?>
+                    </li>
+                </ul>
+                <?php
+                $i++;
+            }
+        }
+    ?>
+</div>
+<script>
+    $('#submitRegisterForm').on('click',function(){
+        ajaxyFormData('registerForm','<?php echo url()?>/admin/add-reg-field',false);
+        cleanForm('registerForm');
+        $('#message').html('با موفقیت ذخیره شد.');
+    });
+    $('#field_type').on('change',function(){
+        var val = $(this).find(":selected").text();
+        if (val== "منوی کشویی"){
+            $('#specific').css('display','none');
+            $('#dropdown').css('display','block');
+        }else{
+            $('#specific').css('display','block');
+            $('#dropdown').css('display','none');
+        }
+    });
+    $('#newDdValue').on('click',function(){
+       $('#dropdown').append('<br><input type="text" name="dropdownValue[]" style="width:200px;padding:4px;margin:4px;" placeholder="عنوان">');
+    });
+    function deactivateField(itemId){
+        ajaxSendData('message',{
+            id:itemId
+        },'<?php echo url()?>/admin/deactive-field');
+        refreshPage();
+    }
+    function activateField(itemId){
+        ajaxSendData('message',{
+            id:itemId
+        },'<?php echo url()?>/admin/active-field');
+        refreshPage();
+    }
+
+    function refreshPage(){
+        setTimeout(responder('register-fields'),1500);
+    }
+</script>

@@ -1,0 +1,208 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>پیش فاکتور</title>
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/food/preorder-style.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/food/preorder-style.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(URL::asset('assets/food/font.css')); ?>">
+  <link href="<?php echo e(URL::asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')); ?>" rel="stylesheet" type="text/css"/>
+  <link href="<?php echo e(URL::asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')); ?>" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="<?php echo e(URL::asset('assets/food/jquery.min.js')); ?>"></script>
+  <link rel="icon" type="image/png" href="<?php echo e(URL::asset('assets/images/favicon.png')); ?>">
+</head>
+<?php
+if (isset($site_offline) && $site_offline!=""){
+  echo "<div style='margin:50px auto;'><p>متاسفانه فعلا امکان سفارش گیری آنلاین وجود ندارد. بعدا تلاش فرمائید.</p></div>";
+  exit;
+}
+?>
+<body>
+<img src="<?php echo e(URL::asset('assets/images/logo.png')); ?>" class="logo">
+<br><br>
+<div class="userStats">
+  <span>سفارش دهنده: <?php echo Session::get('username')?></span>
+  <span style="margin-right: 50px;">شماره فاکتور : <?php echo Session::get('factorId')?></span>
+</div><br><br><br>
+<form method="post" action="/food/check-coopen">
+<input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
+<label>کوپن تخفیف:</label>
+<input type="text" name="coupon_code" id="coupon_code">
+<button type="submit">ثبت</button>
+</form>
+<div>
+  <ul class="menu">
+    <li class="header">نام غذا</li>
+    <li class="header">تعداد</li>
+    <li class="header">فی</li>
+    <li class="header">مجموع</li><br>
+  </ul>
+  <?php
+  $ses = Session::get('foods',null);
+  if (!isset($ses) || $ses=="" || $ses==null){
+    header("Location: ".url()."/food/menu");
+    exit;
+  }
+  $foods = explode('|',Session::get('foods',null));
+  $prices = explode('|',Session::get('price',null));
+  $totalFee = Session::get('total',null);
+  $pre = explode('|',Session::get('pre',null));
+  $priceSlice=array();
+  $prSlice=array();
+  foreach($prices as $price){
+    $priceSlice[]=$price;
+  }
+  foreach($pre as $pr){
+    $prSlice[]=$pr;
+  }
+  for($i=0;$i<count($foods);$i++){
+    if ($foods[$i]==""){
+      continue;
+    }
+    ?>
+    <ul class="menu item">
+      <li><?php echo $foods[$i];?></li>
+      <li><?php echo $priceSlice[$i];?></li><br>
+      <li><?php echo $prSlice[$i];?></li><br>
+      <li><?php echo $priceSlice[$i]*$prSlice[$i];?></li><br>
+    </ul>
+    <?php
+  }
+  ?>
+  <div class="totalFee">
+    <span>جمع کل:</span>
+    <span id="totalFee"><?php echo $totalFee?></span>
+    <span>تومان</span><br><br>
+    <span>تخفیف:</span>
+    <?php
+    $discount = Session::get('discount');
+    $fromFee = Session::get('c_from_fee');
+
+    $cDiscount = Session::get('c_discount');
+
+    if ($totalFee <= $discount && $discount!=0){
+      ?>
+      <span>0 تومان</span>
+      <br><span>مبلغ خرید شما معتبر نمی باشد.</span><br>
+      <span>مبلغ قابل پرداخت:</span>
+      <span><?php echo $totalFee?> تومان</span>
+      <?php
+      Session::put('new_total',$totalFee);
+    }else{
+      $discountType = Session::get('discount_type');
+      if (!isset($discount)){
+        $discount = 0;
+      }
+      ?>
+      <span><?php echo $discount;?></span>
+      <?php
+      if ($discountType ==  1){
+        ?>
+        <span>درصد</span><br>
+        <span>مبلغ قابل پرداخت:</span>
+        <span><?php echo $newTotalFee = $totalFee - ($totalFee*$discount/100);?>تومان</span>
+        <?php
+        Session::put('new_total',$newTotalFee);
+      }else if($discountType == 2){
+        ?>
+        <span>تومان</span><br>
+        <span>مبلغ قابل پرداخت:</span>
+        <span><?php echo $newTotalFee = $totalFee - $discount;?>تومان</span>
+        <?php
+        Session::put('new_total',$newTotalFee);
+      }
+    }?>
+  </div>
+</div>
+
+<div class="time">
+  <span>زمان تقریبی آماده سازی: <?php echo Session::get('foodtime')?>دقیقه</span><br>
+  <span class="error" id="error"></span>
+</div>
+<div style="margin: 12px;padding: 8px;">
+  <form method="post" action="<?php echo url()?>/food/io">
+    <input type="hidden" name="_token" value="<?php echo e(Session::token()); ?>">
+    <?php
+      if (isset($orderTypes)){
+        foreach($orderTypes as $orderType){
+          ?>
+          <input type='radio' name='orderType' onclick="validatePayment('<?php echo $orderType->id ?>')" style='padding:8px;margin:8px;' value="<?php echo $orderType->id ?>" required><?php echo $orderType->title;?>
+          <?php
+        }
+      }
+    ?>
+    <br><br><input type='text' name='orderVal' style='width:300px;padding:8px;'><br>
+    <label for="desc">توضیحات:</label>
+    <textarea class="desc" id="desc"></textarea>
+    <div id="paymentRule"></div>
+    <br><br><button type="submit" id="btnPay">پرداخت</button>
+  </form>
+  <!--label><input type="checkbox" value="1" onclick="validatePayment('present')" class="radio" name="fooby[1][]" id="here">اکنون در رستوران هستم</label-->
+  <!--label><input type="checkbox" value="1" class="radio" onclick="validatePayment('inway')" name="fooby[1][]" id="inway">تو راهم</label-->
+  <!--label><input type="checkbox" value="1" class="radio" onclick="validatePayment('deliver')" name="fooby[1][]" id="deliver">غذا رو با پیک برام بفرستید</label-->
+  <!--label><input type="checkbox" value="1" class="radio" onclick="validatePayment('income')" name="fooby[1][]" id="get">غذا رو میام می برم.</label-->
+</div>
+</body>
+</html>
+<script>
+  $('#submit_coupon').on('click',function(){
+
+    var coupon_code = $('#coupon_code').val();
+    ajaxSendData('',{
+      coopen_id:coupon_code
+    },'/food/check-coopen');
+  });
+
+  $(function(){
+    $("input:checkbox").on('click', function() {
+      var $box = $(this);
+      if ($box.is(":checked")) {
+        var group = "input:checkbox[name='" + $box.attr("name") + "']";
+        $(group).prop("checked", false);
+        $box.prop("checked", true);
+      } else {
+        $box.prop("checked", false);
+      }
+    });
+  });
+</script>
+<script>
+  function submitOrder(type){
+    var inRest = $('#inrest').val();
+    var way = $('#way').val();
+    var del = $('#del').val();
+    var address = $('#address').val();
+    var come = $('#come').val();
+    var desc = $('#desc').val();
+    if (inRest==""&&way==""&&del==""&&address==""&&come==""){
+      $('#error').text('لطفا یکی از موارد تحویل غذا را انتخاب کنید.');
+      return;
+    }
+    $.ajax('<?php echo url()?>/food/io',{
+      dataType:'json',
+      data:{
+        inrest:inRest,
+        inway:way,
+        indel:del,
+        inadd:address,
+        income:come,
+        description:desc,
+        paymentType:type
+      },
+      success:function(data){
+        window.location.href = '<?php echo url();?>'+data.content;
+      }
+    })
+  }
+  function validatePayment(type){
+    $.ajax('<?php echo url()?>/food/validatePayment',{
+      dataType:'json',
+      data:{
+        orderType:type,
+        _token:'<?php echo csrf_token();?>'
+      },
+      success:function(data){
+        $('#paymentRule').html(data.content);
+      }
+    });
+  }
+</script>

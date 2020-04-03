@@ -1,0 +1,112 @@
+<select id="staff" style="width:150px;margin:8px">
+    <option></option>
+    <?php if(isset($fields)): ?>
+    <?php foreach($fields as $field): ?>
+        <option value="<?php echo e($field->id); ?>"><?php echo e($field->name); ?></option>
+    <?php endforeach; ?>
+    <?php endif; ?>
+</select>
+<br><br><br>
+<div id="staffLoanSummary">
+    <?php $__env->startSection('content'); ?>
+    <a href="#" id="newLoanForm">ثبت وام</a>
+    <div id="new-loan-dialog"></div>
+    <script>
+        $('#newLoanForm').on('click',function(){
+            var selectedId = $('#staff').val();
+            ajaxSendData('new-loan-dialog',{
+                itemId:selectedId
+            },'<?php echo url()?>/admin/loans');
+        });
+    </script>
+    <br><br><br>
+    <link href="<?php echo e(URL::asset('assets/datatable/css/style.css')); ?>" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" language="javascript"
+            src="<?php echo e(URL::asset('assets/datatable/js/jquery.dataTables.min.js')); ?>">
+    </script>
+    <script type="text/javascript" language="javascript"
+            src="<?php echo e(URL::asset('assets/datatable/js/dataTables.bootstrap.min.js')); ?>">
+    </script>
+
+    <div class="row jfirst-child">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+            <div class=" portlet light jform">
+                <div  style="margin-top: -40px;">
+                    <table id="datazagrot" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th >وام</th>
+                            <th >تاریخ دریافت</th>
+                            <th >بازپرداخت</th>
+                            <th class="jaction">عملیات</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th >وام</th>
+                            <th >تاریخ دریافت</th>
+                            <th >بازپرداخت</th>
+                            <th class="jaction">عملیات</th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
+    <?php if(isset($loans)): ?>
+        <?php foreach($loans as $stf): ?>
+            <?php if($stf->payed == 0): ?>
+                <?php $image ="times";?>
+                <?php $payclass ="jactpayno";?>
+                <?php $paytitle ="تایید نشده";?>
+            <?php else: ?>
+                <?php $image ="check";?>
+                <?php $payclass ="jactpayok";?>
+                <?php $paytitle ="تایید شده";?>
+            <?php endif; ?>
+            <tr>
+                <td ><?php echo e($stf->amount); ?></td>
+                <td ><?php echo e(g2j($stf->loan_date)); ?></td>
+                <td ><?php echo e(g2j($stf->payback_date)); ?></td>
+                <td >
+                    <a href="#" title="ویرایش" onclick="editLoan('<?php echo e($stf->id); ?>','<?php echo e($stf->staff_id); ?>','<?php echo e($stf->payed); ?>')"><i class="fa fa-pencil"></i></a>
+                    <a id="indicator" class="<?php echo $payclass?>" href="#" title="<?php echo $paytitle?>" onclick="payed('<?php echo e($stf->id); ?>','<?php echo e($stf->payed); ?>')"><i class="fa fa-<?php echo $image?>"></i></a>
+                </td>
+            </tr>
+    <?php endforeach; ?>
+    <?php endif; ?>
+    <?php $__env->stopSection(); ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="editLoanDialog" style="display: none;"></div>
+<script>
+    $('#staff').on('change',function(){
+        var selectedId = $(this).val();
+        ajaxRequest('<?php echo url()?>/admin/getLoans/'+selectedId,'staffLoanSummary');
+    });
+    function editLoan(loanId,staff_id){
+        ajaxSendData('editLoanDialog',{
+            itemId:loanId,
+            staffId:staff_id
+        },'<?php echo url()?>/admin/editLoan');
+        setDialog('editLoanDialog',600,400);
+    }
+
+    function payed(id,status,pay){
+        var selectedId = $('#staff').val();
+        ajaxSendDataWithOutBack({
+            state:status,
+            itemId:id,
+            paye:pay
+        },'<?php echo url()?>/admin/payLoan');
+        setTimeout(
+            function(){
+                ajaxRequest('<?php echo url()?>/admin/getLoans/'+selectedId,'staffLoanSummary');
+            },1000);
+    }
+</script>

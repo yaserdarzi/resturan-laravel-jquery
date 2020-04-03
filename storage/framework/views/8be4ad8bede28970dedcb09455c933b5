@@ -1,0 +1,57 @@
+<p id="message">&nbsp;</p>
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+    <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+    <li style="display: inline-block;padding:10px 8px;width:350px;">عنوان</li>
+    <li style="display: inline-block;padding:10px 8px;width:50px;">&nbsp;</li>
+    <li style="display: inline-block;padding:10px 8px;width:50px;">&nbsp;</li>
+    <li style="display: inline-block;padding:10px 8px;width:50px;">&nbsp;</li>
+</ul>
+<?php
+    if (isset($questions)){
+        $i=0;
+        $j=1;
+        foreach($votes as $vote){
+            ?>
+            <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+                <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $j;?></li>
+                <li style="display: inline-block;padding:10px 8px;width:350px;"><?php echo $questions[$i]->title;?></li>
+                <li style="padding:12px 8px;width:50px;display: inline-block;">
+                    <a href="#" class="jtrashicon" title="حذف" onclick="deleteVote('<?php echo $questions[$i]->id?>')">حذف</a>
+                </li>
+                <li style="padding:12px 8px;width:50px;display: inline-block;">
+                    <a href="#" onclick="vote('<?php echo $questions[$i]->id?>')">جزئیات</a>
+                </li>
+                <li style="padding:12px 8px;width:50px;display: inline-block;">
+                    <a href="#" title="ویرایش" onclick="editVote('<?php echo $questions[$i]->id?>')">ویرایش</a>
+                </li>
+            </ul>
+            <?php
+            $i++;
+            $j++;
+        }
+    }
+?>
+<br><br><br>
+<div id="chartView" style="margin-top:25px;padding:4px;"></div>
+<div id="editVoteDialog" style="display: none"></div>
+<script>
+    function deleteVote(qid){
+        ajaxSendData('message',{
+            id:qid
+        },'<?php echo url()?>/admin/delete-vote');
+        setTimeout(responder('votes-report'),1750);
+    }
+    function vote(qid){
+        ajaxSendData('chartView',{
+            id:qid
+        },'<?php echo url()?>/admin/vote-detail');
+    }
+
+    function editVote(id){
+        ajaxSendData('editVoteDialog',{
+            qid:id
+        },'<?php echo url()?>/admin/edit-vote');
+        setDialog('editVoteDialog',600,500);
+    }
+
+</script>

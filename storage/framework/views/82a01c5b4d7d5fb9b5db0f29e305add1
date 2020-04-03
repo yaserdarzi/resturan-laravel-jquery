@@ -1,0 +1,39 @@
+<form id="transForm">
+  <label for="fromBank">از حساب:</label>
+  <select name="fromBank" id="fromBank" style="width:140px;">
+    <?php
+    if (isset($accounts)) {
+      foreach ($accounts as $account) {
+        ?>
+        <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+        <?php
+      }
+    }
+    ?>
+  </select><br>
+  <label for="toBank">به حساب:</label>
+  <select name="toBank" id="toBank" style="width:140px;">
+    <?php
+    if (isset($accounts)) {
+      foreach ($accounts as $account) {
+        ?>
+        <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+        <?php
+      }
+    }
+    ?>
+  </select><br>
+  <label for="cash">مبلغ:</label>
+  <input id="cash" type="text" name="cash" style="width:200px;padding:4px;margin:4px;color:#2f2f2f;"><br>
+  <label for="desc">توضیحات:</label>
+  <input type="text" name="desc" id="desc" style="width:200px;padding:4px;margin:4px;color:#2f2f2f;"><br>
+</form>
+<a href="#" id="transSubmit">ثبت</a>
+<script>
+  $(function(){
+      $('#transSubmit').on('click',function(){
+        ajaxyFormData('transForm','<?php echo url()?>/admin/insert-trans',true,'transDialog');
+        responder('transaction',this);
+      });
+  });
+</script>

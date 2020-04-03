@@ -1,0 +1,25 @@
+<form id="accountForm">
+  <label for="name">نام بانک:</label>
+  <input type="text" id="name" name="name" style="padding:8px;width:200px;margin:4px;color:#2f2f2f;"><br>
+  <label for="acc_number">شماره حساب</label>
+  <input type="text" id="acc_number" name="acc_number" style="padding:8px;width:200px;margin:4px;color:#2f2f2f;"><br>
+  <label for="sheba">شماره شبا</label>
+  <input type="text" id="sheba" name="sheba" style="padding:8px;width:200px;margin:4px;color:#2f2f2f;"><br>
+  <label for="acc_type">نوع حساب</label>
+  <input type="text" id="acc_type" name="acc_type" style="padding:8px;width:200px;margin:4px;color:#2f2f2f;"><br>
+  <label for="card_number">شماره کارت</label>
+  <input type="text" id="card_number" name="card_number" style="padding:8px;width:200px;margin:4px;color:#2f2f2f;"><br>
+  <label for="check">چک دارد</label>
+  <input type="checkbox" name="is_check" id="check"><br>
+</form>
+<a href="#" id="mSubmit">ثبت</a>
+<script>
+  $(function(){
+    $('#mSubmit').on('click',function(){
+      var detail = $('#accountForm').serialize();
+      $.get('<?php echo url()?>/admin/submit-account',detail);
+      $('#dialogParent').dialog('destroy');
+      responder('submit-account');
+    });
+  });
+</script>

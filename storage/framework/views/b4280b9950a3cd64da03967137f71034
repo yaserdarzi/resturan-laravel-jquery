@@ -1,0 +1,23 @@
+<form id="wareHouseForm">
+    <br><br>
+    <label for="parentWareHouse">انبار مادر:</label>
+    <select name="parentWareHouse" id="parentWareHouse" style="width:30%;">
+        <option value="0">زیرمجموعه انباری نیست.</option>
+            <?php if(isset($storages)): ?>
+            <?php foreach($storages as $storage): ?>
+                <option value="<?php echo e($storage->id); ?>"><?php echo e($storage->title); ?></option>
+            <?php endforeach; ?>
+            <?php endif; ?>
+    </select><br><br><br>
+    <label for="wTitle">نام انبار:</label>
+    <input id="wTitle" name="wTitle" style="width: 40%;padding:6px;"><br><br><br>
+    <a href="#" id="addWareHouse">ثبت</a><br>
+    <span id="successMessage" style="color:#3f0;"></span>
+</form>
+<script>
+    $('#addWareHouse').on('click',function(){
+       ajaxyFormData('wareHouseForm','<?php echo url()?>/admin/warehouse-warehouses',false);
+        cleanForm('wareHouseForm');
+        $('#successMessage').html('با موفقیت ذخیره شد.');
+    });
+</script>

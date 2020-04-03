@@ -1,0 +1,72 @@
+<label for="name">نام</label>
+<input id="id" type="hidden" style="width:200px;padding:8px;margin:4px;color:#2f2f2f" value="<?php echo $materials->id?>">
+<input id="matTitle" name="matTitle" style="width:200px;padding:8px;margin:4px;color:#2f2f2f" value="<?php echo $materials->name?>">
+<label for="count">مقدار</label>
+<input id="count" name="count" style="width:200px;padding:8px;margin:4px;color:#2f2f2f" value="<?php echo $materials->amount?>"><br><br>
+<select id="grouping" style="width:120px;">
+  <?php if(isset($allGroups)): ?>
+    <?php foreach($allGroups as $allGroup): ?>
+      <?php if($materials->cat_id == $allGroup->id): ?>
+        <option value="<?php echo e($allGroup->id); ?>" selected><?php echo e($allGroup->title); ?></option>
+      <?php else: ?>
+        <option value="<?php echo e($allGroup->id); ?>"><?php echo e($allGroup->title); ?></option>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</select>
+<select id="uniting" style="width:120px;">
+  <?php if(isset($allUnits)): ?>
+    <?php foreach($allUnits as $allUnit): ?>{
+    <?php if($materials->unit_id == $allUnit->id): ?>
+      <option value="<?php echo e($allUnit->id); ?>" selected><?php echo e($allUnit->title); ?></option>
+    <?php else: ?>
+      <option value="<?php echo e($allUnit->id); ?>"><?php echo e($allUnit->title); ?></option>
+    <?php endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</select>
+<label for="exp_date">تاریخ انقضا:</label>
+<input id="exp_date0" style="width:200px;padding:4px;" value="<?php echo e(g2j($materials->exp_date)); ?>">
+<br><br><a href="#" id="mySubmit" style="color:#f80;text-decoration: none">ثبت</a>
+<script>
+  $(function(){
+    $('#mySubmit').on('click',function(){
+      var name = $('#matTitle').val();
+      var count= $('#count').val();
+      var id = $('#id').val();
+      var group = $('#grouping').val();
+      var unit = $('#uniting').val();
+      var expDate = $('#exp_date0').val();
+      $.ajax('<?php echo url()?>/admin/update-material',{
+        dataType:'json',
+        data:{
+          title:name,
+          amount:count,
+          itemId : id,
+          group_name:group,
+          unit_name:unit,
+          exp_date:expDate
+        },
+        success:function(data){
+          if (data.message=="1"){
+            $('#dialogPan').dialog('destroy');
+            $.ajax("<?php echo url()?>/admin/ajaxCore", {
+              dataType: 'json',
+              data:{
+                elementId:'add-mat'
+              },
+              success: function (data) {
+                $('#page-content').html(data.content);
+              }
+            });
+          }
+        }
+      });
+    });
+  });
+  $('#exp_date0').datepicker({
+    changeMonth: true,
+    changeYear: true,
+    dateFormat:'yy/mm/dd'
+  });
+</script>

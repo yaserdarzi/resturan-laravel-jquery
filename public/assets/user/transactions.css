@@ -1,0 +1,48 @@
+body{
+  background-color: #f2e0a9;
+  font-family:IRANSans;
+}
+.entry{
+  display: flex;
+  align-items: center;
+  direction: rtl;
+  justify-content: space-between;
+  background-color:#76FF03;
+  max-width: 800px;
+  text-align:center;
+  margin:25px auto;
+  min-width:500px;
+  box-shadow: 1px 1px 1px rgba(1,1,1,0.5);
+}
+
+.entry li{
+  display: inline-block;
+  padding:10px 8px;
+  list-style: none;
+  width:200px;
+  color:#111;
+}
+
+.factor_entry{
+  display: flex;
+  align-items: center;
+  direction: rtl;
+  justify-content: space-between;
+  max-width: 800px;
+  text-align:center;
+  margin:25px auto;
+  min-width:500px;
+}
+hr{
+  max-width: 800px;
+  min-width: 500px;
+  border:none;
+  border-top:1px solid rgba(1,1,1,0.1);
+}
+.factor_entry li{
+  display: inline-block;
+  padding:10px 8px;
+  list-style: none;
+  width:200px;
+  color:#111;
+}

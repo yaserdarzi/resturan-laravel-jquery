@@ -1,0 +1,61 @@
+<ul style="display: flex;justify-content: space-between;background-color:#ff006f;align-items: center;max-width: 800px;text-align:center;margin: 0 auto;color:#fff;min-width:300px;">
+    <li style="display: inline-block;padding:10px 8px;width:35px;">ردیف</li>
+    <li style="display: inline-block;padding:10px 8px;width:200px;">شماره کوپن</li>
+    <li style="display: inline-block;padding:10px 8px;width:200px;">میزان تخفیف</li>
+    <li style="display: inline-block;padding:10px 8px;width:200px;">تاریخ انقضا</li>
+    <li style="display: inline-block;padding:10px 8px;width:175px;">وضعیت</li>
+</ul>
+<?php
+    if (isset($fields)){
+        $i=0;
+        foreach($fields as $field){
+            ?>
+            <ul style="display: flex;justify-content: space-between;align-items: center;max-width: 800px; color:#FAFAFA;margin: 0 auto;text-align: center; color:#2f2f2f;">
+                <li style="display: inline-block;padding:10px 8px;width:35px;"><?php echo $i+1;?></li>
+                <li style="display: inline-block;padding:10px 8px;width:200px;"><?php echo $field->coopen_id;;?></li>
+                <li style="padding:12px 8px;width:200px;display: inline-block;">
+                    <?php
+                        if ($field->type == 0){
+                            echo $field->discount;?> درصد<?php
+                        }else{
+                            echo $field->discount;?> تومان<?php
+                        }
+                    ?>
+                </li>
+                <li style="padding:12px 8px;width:200px;display: inline-block;"><?php echo $dates[$i];?></li>
+                <li style="padding:12px 8px;width:175px;display: inline-block;">
+                    <?php
+                        if ($field->enabled == 1){
+                            echo "فعال";
+                            ?>
+                            <a href="#" onclick="deactivateCoop('<?php echo $field->id;?>')"> / غیرفعال کردن</a>
+                            <?php
+                        }else{
+                            echo "غیر فعال";
+                            ?>
+                            <a href="#" onclick="activateCoop('<?php echo $field->id;?>')"> / فعال سازی</a>
+                            <?php
+                        }
+                    ?>
+                </li>
+            </ul>
+            <?php
+            $i++;
+        }
+    }
+?>
+<span id="span123" style="display: none;"></span>
+<script>
+    function deactivateCoop(id){
+        ajaxSendData('span123',{
+            itemId:id
+        },'<?php echo url()?>/admin/change-coopen-state');
+        responder('all-coopens');
+    }
+    function activateCoop(id){
+        ajaxSendData('span123',{
+            itemId:id
+        },'<?php echo url()?>/admin/activate-coopen-state');
+        responder('all-coopens');
+    }
+</script>

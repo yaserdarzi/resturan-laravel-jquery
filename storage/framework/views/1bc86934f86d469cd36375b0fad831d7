@@ -1,0 +1,47 @@
+<?php
+    $salaryPerHour = $staff->salary / $staff->work_hours;
+    if ($vacation_times > $staff->max_vacation){
+        $invalidVacation = $vacation_times-$staff->max_vacation;
+    }else {
+        $invalidVacation = 0;
+    }
+?>
+<div style="margin:20px auto;display: block;">
+    <p>نام کارمند : <?php echo $staff->name?></p>
+    <p>حقوق دریافتی: <?php echo $staff->salary?> تومان</p>
+    <p>مجموع ساعات کاری در ماه: <?php echo $staff->work_hours?></p>
+    <p>حقوق به ازای هرساعت : <?php echo round($salaryPerHour,2)?> تومان</p>
+    <p>مجموع ساعات مرخصی در این ماه: <?php echo $vacation_times?> ساعت</p>
+    <p>میزان مجاز ساعات مرخصی در ماه: <?php echo $staff->max_vacation?> ساعت</p>
+    <p>حقوق محاسبه شده براساس :<?php echo $salary = $staff->work_hours-$invalidVacation?> ساعت</p>
+    <label for="salaryThisMonth">حقوق قابل پرداخت : </label>
+    <input type="text" id="salaryThisMonth" style="width:140px;padding:4px;" value="<?php echo ceil($salary*$salaryPerHour)?>">تومان
+    <input type="hidden" id="staffId" value="<?php echo $staff->id?>">
+    <label>پرداخت از طریق حساب : </label>
+    <select id="accounts" style="width:120px;">
+        <?php
+            if (isset($accounts)){
+                foreach($accounts as $account){
+                    ?>
+                        <option value="<?php echo $account->id?>"><?php echo $account->name?></option>
+                    <?php
+                }
+            }
+        ?>
+    </select>
+    <a href="#" id="paySubmit">پرداخت</a>
+</div>
+<span id="mPayMessage"></span>
+<script>
+    $('#paySubmit').on('click',function(){
+        var salary = $('#salaryThisMonth').val();
+        var targetAccount = $('#accounts').val();
+        var id = $('#staffId').val();
+        ajaxSendDataWithOutBack({
+            payment:salary,
+            account:targetAccount,
+            itemId:id
+        },'<?php echo url()?>/admin/paySalary');
+        $('#mPayMessage').html('با موفقیت ذخیره شد.');
+    })
+</script>

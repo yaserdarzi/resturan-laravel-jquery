@@ -1,0 +1,19 @@
+<div style="direction:rtl;">
+    <form action="<?php echo url()?>/admin/add-food-cat" method="post">
+        <input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
+        <label for="subset">زیرمجموعه رستوران:</label>
+        <select id="subset" name="subset">
+            <?php if(isset($subsets)): ?>
+                <?php foreach($subsets as $subset): ?>
+                    <?php if($subset->id != 1): ?>
+                        <option value="<?php echo e($subset->id); ?>"><?php echo e($subset->title); ?></option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+        <span>نام گروه:</span>
+        <input type="text" name="menu_name" placeholder="نام گروه را وارد نمائید" style=" padding:8px;width:300px;height:35px;margin-left: 12px;">
+        <input type="text" name="desc" placeholder="توضیحات گروه" style=" padding:8px;width:300px;height:35px;margin-left: 5px;;">
+        <button style="width:80px;height:25px;margin-top:25px;">ثبت</button>
+    </form>
+</div>

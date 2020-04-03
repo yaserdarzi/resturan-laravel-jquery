@@ -1,0 +1,55 @@
+<form id="coupon-form">
+	<div class="row">
+		<label for="coupon_code">کد کوپن (اختیاری)</label>
+		<input type="text" name="coupon_code" id="coupon_code" class=" zinput" style="width:250px;padding:4px;">
+		<span id="code-response"></span>
+	</div>
+	<div class="row">
+		<label for="expire">تاریخ انقضا:</label>
+		<input type="text" name="expire" id="expire" class="form-control zinput" style="width:250px;padding:4px;">
+	</div>	
+	<div class="row">
+		<label for="type">نوع تخفیف:</label>
+		<!-- <input type="text" name="type" id="type" class="form-control zinput" style="width:250px;padding:4px;"> -->
+		<select name="type" id="type" style="width:250px;padding:4px;">
+			<option value="1">درصد</option>
+			<option value="2">تومان</option>
+		</select>
+	</div>	
+
+	<div class="row">
+		<label for="amount">میزان تخفیف:</label>
+		<input type="text" name="amount" id="amount" class="form-control zinput" style="width:250px;padding:4px;">
+	</div>
+
+	<a href="javascript:void(0);" id="submit-coupon">ثبت</a>
+</form>
+
+<script type="text/javascript">
+
+	$('#expire').datepicker({
+		changeMonth:true,
+		changeYear:true,
+		dateFormat:'yy/mm/dd'
+	});
+
+	$('#submit-coupon').on('click',function(){
+
+		var code = $('#coupon_code').val();
+		var expire = $('#expire').val();
+		var type = $('#type').val();
+		var amount = $('#amount').val();
+
+		if(expire == ""){
+			alert("لطفا تاریخ انقضا را وارد نمایید");
+			return;
+		}
+
+		ajaxSendData('code-response',{
+			coupon_code:code,
+			expire_date:expire,
+			amount_type:type,
+			amount:amount
+		},'/admin/add-coupon');
+	});
+</script>

@@ -1,0 +1,115 @@
+.menuName{
+  display:block;
+  direction:rtl;
+  background-color:#f80;
+  padding:8px;
+  text-align: right;
+  color:#eee;
+  box-shadow: 1px 1px 1px #404040;
+  border-radius:5px;
+  border:3px solid #fff;
+}
+
+.food-entry{
+  direction: rtl;
+  display:flex;
+  padding:8px;
+  margin-right:25px;
+  text-align:center;
+  justify-content:flex-start;
+}
+
+.contentContainer{
+  display: inline-block;
+  text-align:center;
+}
+
+.contentContainer input{
+  margin:0px 128px;
+  padding:8px;
+}
+
+.food-entry li{
+  width:200px;
+  margin-right: 15px;
+  text-align: center;
+  display: inline-block;
+  padding:12px 5px;
+  list-style: none;
+}
+
+.food-entry input{
+  display: inline-block;
+  list-style: none;
+}
+
+.price{
+  width:80px;
+  height:25px;
+  padding:8px;
+  margin-top:8px;
+}
+
+.submitBtn{
+  padding:8px;
+  background-color:#f60;
+  color:#fff;
+  width:128px;
+  box-shadow:1px 1px 1px #2f2f2f;
+  cursor: pointer;
+  border-radius:3px;
+  margin-right: 50px;
+  transition:all 0.4s;
+}
+
+@media only screen and (max-width: 500px){
+  .food-entry li{
+    width:80px;
+    margin-left:2px;
+    padding:6px 3px;
+  }
+  .contentContainer input{
+    marign:0 28px;
+  }
+}
+
+.submitBtn:hover{
+  background-color: #f90;
+  transition:all 0.4s;
+}
+
+#finalCost{
+  display:block;
+  direction: rtl;
+  text-align:left;
+  margin:38px 60px;
+  font-weight: bold;
+}
+
+.thumb{
+  margin-top:4px;
+  border-radius:28px;
+  box-shadow:1px 1px 1px #000;
+  width:60px;
+  height:60px;
+}
+
+.orders{
+  direction: rtl;
+}
+
+.fr{
+  display:inline-block;
+  float:right;
+  margin-right:600px;
+}
+
+#sbsname{
+  margin-right:8px;
+}
+
+.notes{
+  display: block;
+  text-align:center;
+  margin-top:100px;
+}

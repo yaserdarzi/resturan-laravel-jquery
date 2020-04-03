@@ -1,0 +1,20 @@
+<form id="costForm">
+  <?php if(isset($cost) && $cost!=""): ?>
+    <input type="hidden" value="<?php echo e($cost->id); ?>" name="edit">
+  <?php endif; ?>
+  <label for="title">عنوان</label>
+  <input id="title" name="title" style="width:200px;color:#2f2f2f;padding:4px;margin:6px;" value="<?php echo e(isset($cost->title) ? $cost->title : ''); ?>"><br>
+  <label for="desc">توضیحات</label>
+  <input id="desc" name="desc" style="width:200px;color:#2f2f2f;padding:4px;margin:6px;" value="<?php echo e(isset($cost->desc) ? $cost->desc : ''); ?>"><br>
+</form>
+<a href="#" class="jsubmit" id="costSubmit"><i class="fa fa-check"></i></a>
+<script>
+  $(function(){
+    $('#costSubmit').on('click',function(){
+      $('#loading').show();
+      ajaxyFormData('costForm','<?php echo url()?>/admin/submit-cost-type',true,'costDialog');
+      setTimeout("responder('add-cost-type')",1500);
+      setTimeout("$('#loading').hide()",1600);
+    });
+  });
+</script>

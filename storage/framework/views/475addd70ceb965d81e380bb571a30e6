@@ -1,0 +1,154 @@
+<?php if (!isset($orderType)){$orderType = "title-desc";}?>
+  <?php
+      if (isset($error)){
+        ?>
+          <script>
+            alert('<?php echo $error?>');
+          </script>
+        <?php
+      }
+  ?>
+<div id="cReportCotainer">
+  <?php
+  $i=0;
+  $arr=array();
+  if (isset($fields)&& count($fields)>0){
+  foreach($fields as $field) {
+    $date = explode('-', $field->date);
+    $jDate = gregorian_to_jalali($date[0], $date[1], $date[2], '/');
+    $array = [$fields, $user, $count];
+    $values[] = [$i+1,$users[$i]->name,$field->refid,$counts[$i],$field->orderType,$jDate,$field->time,$field->total_fee];
+    $i++;
+  }
+  $titles=['ردیف','نام مشتری','شماره فاکتور','تعداد غذا','نوع تحویل','تاریخ ثبت','ساعت ثبت','مبلغ کل'];
+  $tableFields=['z_orders.id','z_users.name','z_orders.refid','z_food_orders.foodcount','z_order_types.name','z_orders.date','z_orders.time','z_orders.total_fee'];
+   echo zTable($titles,$values,'titleli','titleul','rowli','rowul',$tableFields,$orderType,$orderField,url().'/admin/reportingOrdersSort','cReportCotainer');
+  }else{
+    $titles=['ردیف','نام مشتری','شماره فاکتور','تعداد غذا','تاریخ ثبت','ساعت ثبت','مبلغ کل'];
+    echo zTable($titles,array(),'titleli','titleul','rowli','rowul',null,$orderType,'','','');
+    ?>
+      <ul class="rowul">
+        <li class="titleli" style="border-left:1px solid #e0e0e0;">موردی یافت نشد.</li>
+      </ul>
+    <?php
+  }
+  ?>
+</div>
+<div>
+  <br><br>
+<ul class="nav nav-tabs">
+
+  <!--a class="pdf jfleft" href="#" id="pdf"></a-->
+  <a class="xlsx jfleft" style="margin-left:3px;" href="#" id="excelExport"></a>
+  
+  <li class="nav active"><a id="aBar" class="jtab" href="#bar" data-toggle="tab" aria-expanded="true">نمودار میله ای</a></li>
+  <!--li class="nav"><a id="aLine" class="jtab" href="#line" data-toggle="tab">نمودار خطی</a></li-->
+  
+  <!--li class="nav"><a id="aUserSold" class="jtab" href="#userSold" data-toggle="tab">مشتری/مبلغ</a></li-->
+  <li class="nav"><a id="aDateOrders" class="jtab" href="#dateOrders" data-toggle="tab">تاریخ/سفارشات</a></li>
+</ul>
+
+  <div class="jreportchartdiv" style="text-align: center;">
+	<div id="bar" class="jreportchart jtransition active">
+      <?php if (isset($title)&&isset($data)){?>
+          <?php echo highCharts(' تاریخ / میزان فروش ',$title,' میزان فروش ','time-sale','pie',$data,true);?>
+        <div id="time-sale" class="jreportchart jtransition active"></div>
+      <?php } ?>
+	</div>
+	<!--div id="line" class="jreportchart jtransition">
+      <?php if (isset($title)&&isset($data)){?>
+          <?php echo highCharts(' نمودار تاریخ / میزان فروش ',$title,' میزان فروش ','date-sale','column',$data,false);?>
+          <div id="date-sale" class="jreportchart jtransition active" style="display: none;"></div>
+      <?php } ?>
+	</div-->
+	<!--div id="userSold" class="jreportchart jtransition">
+      <?php if (isset($user_names) && isset($usersSold)){?>
+          <?php echo highCharts(' نمودار مشتری / مبلغ ',$user_names,' مبلغ ','user-sold','pie',$usersSold,false);?>
+          <div id="user-sold" class="jreportchart jtransition active" style="display: none;"></div>
+      <?}?>
+    </div-->
+    <div id="dateOrders" class="jreportchart jtransition">
+      <?php if (isset($title)&&isset($data)){?>
+          <?php echo highCharts(' نمودار تاریخ / تعداد سفارشات ',$title,' تعداد سفارشات ','date-orders','column',$countSold,false);?>
+          <div id="date-orders" class="jreportchart jtransition active" style="display: none;"></div>
+      <?php } ?>
+    </div>
+    
+</div>
+
+</div>
+<script>
+  $(function(){
+    $('#aBar').on('click',function(){
+      $('#date-sale').css('display','none');
+      $('#date-orders').css('display','none');
+      $('#user-sold').css('display','none');
+      $('#time-sale').css('display','block');
+    });
+    $('#aLine').on('click',function(){
+      $('#time-sale').css('display','none');
+      $('#date-orders').css('display','none');
+      $('#time-sale').css('display','none');
+      $('#date-sale').css('display','block');
+    });
+    $('#aDateOrders').on('click',function(){
+      $('#date-sale').css('display','none');
+      $('#date-orders').css('display','block');
+      $('#time-sale').css('display','none');
+      $('#user-sold').css('display','none');
+    });
+    $('#aUserSold').on('click',function(){
+      $('#time-sale').css('display','none');
+      $('#date-orders').css('display','none');
+      $('#user-sold').css('display','block');
+      $('#date-sale').css('display','none');
+    });
+  });
+</script>
+
+<script>
+  function takePicture(id){
+    var element= $('#'+id);
+    html2canvas(element,{
+      onrendered: function( canvas ) {
+        var img = canvas.toDataURL()
+        window.open(img);
+      },
+      background:'#fff'
+    });
+  }
+</script>
+<script>
+  <?php if (isset($titles) && isset($values)){
+      ?>
+         $('#excelExport').on('click',function(){
+           window.open('<?php echo url()?>/admin/excel-export?title=<?php echo json_encode($titles);?>&data=<?php echo json_encode($values)?>');
+         });
+      <?php
+  }
+?>
+</script>
+<script>
+  function sortTable(type,field,dbTable,view){
+    var dateFrom = $('#datepicker0').val();
+    var dateTo = $('#datepicker1').val();
+    var timeFrom = $('#timepicker0').val();
+    var timeTo = $('#timepicker1').val();
+    $.ajax('<?php echo url()?>/admin/sort-table',{
+      dataType:'json',
+      data:{
+        field_name:field,
+        sortType:type,
+        table_name:dbTable,
+        finalView:view,
+        fromDate:dateFrom,
+        toDate:dateTo,
+        fromTime:timeFrom,
+        toTime:timeTo
+      },
+      success:function(data){
+        $('#reportResult').html(data.content);
+      }
+    });
+  }
+</script>
